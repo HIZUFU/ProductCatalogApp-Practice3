@@ -172,8 +172,11 @@
         await joinSite(state.siteId);
     });
 
+    // Автоматическое переподключение исчерпало попытки
+    // (сервер долго недоступен) — продолжаем подключаться.
     connection.onclose(() => {
         setConnectionStatus("disconnected");
+        scheduleStart();
     });
 
     // ===== Вызовы серверных методов =====
@@ -632,6 +635,10 @@
     // ===== Запуск =====
 
     async function start() {
+        if (connection.state !== signalR.HubConnectionState.Disconnected) {
+            return;
+        }
+
         setConnectionStatus("connecting");
 
         try {
@@ -640,9 +647,13 @@
             await joinSite(state.siteId);
         } catch (error) {
             setConnectionStatus("disconnected");
-            // Повторная попытка подключения через 5 секунд.
-            setTimeout(start, 5000);
+            scheduleStart();
         }
+    }
+
+    // Повторная попытка подключения через 5 секунд.
+    function scheduleStart() {
+        setTimeout(start, 5000);
     }
 
     // Браузер может восстановить выбранную площадку при возврате на страницу.
