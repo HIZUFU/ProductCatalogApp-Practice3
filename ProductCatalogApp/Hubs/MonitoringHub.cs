@@ -4,14 +4,10 @@ using ProductCatalogApp.Services;
 
 namespace ProductCatalogApp.Hubs
 {
-    // Хаб SignalR для мониторинга датчиковой аппаратуры в реальном времени.
-    // Клиенты подключаются по адресу /hubs/monitoring (см. Program.cs).
     public class MonitoringHub : Hub
     {
-        // Ключ в Context.Items, под которым хранится текущая группа подключения.
         private const string CurrentGroupKey = "CurrentGroup";
 
-        // Допустимый модуль значения, передаваемого оператором.
         private const double MaxAbsoluteReadingValue = 1_000_000;
 
         private readonly OnlineUserTracker _onlineUsers;
@@ -28,8 +24,6 @@ namespace ProductCatalogApp.Hubs
             _simulation = simulation;
         }
 
-        // Подключение клиента: учитываем его среди пользователей онлайн
-        // и сообщаем всем клиентам новое количество подключённых.
         public override async Task OnConnectedAsync()
         {
             string? userName = Context.User?.Identity?.IsAuthenticated == true
@@ -45,7 +39,6 @@ namespace ProductCatalogApp.Hubs
             await base.OnConnectedAsync();
         }
 
-        // Отключение клиента: убираем его из списка онлайн.
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             _onlineUsers.Disconnect(Context.ConnectionId);
@@ -57,10 +50,6 @@ namespace ProductCatalogApp.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
-        // Серверный метод 1 (доступен всем, включая гостей).
-        // Переводит подключение в группу выбранной производственной площадки
-        // (null — все площадки) и отправляет вызывающему клиенту снимок
-        // текущего состояния: датчики, журнал показаний, активные тревоги.
         public async Task JoinSite(int? productionSiteId)
         {
             if (productionSiteId.HasValue &&
@@ -97,10 +86,6 @@ namespace ProductCatalogApp.Hubs
                 snapshot);
         }
 
-        // Серверный метод 2 (пользователь и администратор).
-        // Оператор передаёт показание контрольного замера: оно сохраняется
-        // в БД и рассылается подписчикам площадки; при выходе за норму
-        // всем клиентам отправляется тревога, отправителю — подтверждение.
         [Authorize]
         public async Task SubmitReading(int sensorId, double value)
         {
@@ -129,9 +114,6 @@ namespace ProductCatalogApp.Hubs
                 reading);
         }
 
-        // Серверный метод 3 (только администратор).
-        // Квитирование тревоги: отметка сохраняется в БД,
-        // все клиенты убирают тревогу из списка активных.
         [Authorize(Roles = "Admin")]
         public async Task AcknowledgeAlarm(int readingId)
         {
@@ -151,8 +133,6 @@ namespace ProductCatalogApp.Hubs
                 alarm);
         }
 
-        // Серверный метод 4 (только администратор).
-        // Включает или выключает имитатор датчиковой аппаратуры.
         [Authorize(Roles = "Admin")]
         public async Task SetSimulationEnabled(bool enabled)
         {

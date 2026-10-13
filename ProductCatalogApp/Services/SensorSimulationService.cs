@@ -7,10 +7,6 @@ using ProductCatalogApp.Models;
 
 namespace ProductCatalogApp.Services
 {
-    // Имитатор датчиковой аппаратуры металлургического агрегата.
-    // Периодически формирует показания всех датчиков, сохраняет их в БД
-    // и рассылает клиентам через контекст хаба (IHubContext) —
-    // сервер отправляет сообщения сам, без запроса от клиента.
     public class SensorSimulationService : BackgroundService
     {
         public const string SourceName = "Имитатор";
@@ -21,7 +17,6 @@ namespace ProductCatalogApp.Services
         private readonly MonitoringOptions _options;
         private readonly ILogger<SensorSimulationService> _logger;
 
-        // Последнее сформированное значение каждого датчика.
         private readonly Dictionary<int, double> _lastValues = new();
 
         public SensorSimulationService(
@@ -70,8 +65,6 @@ namespace ProductCatalogApp.Services
         private async Task GenerateReadingsAsync(
             CancellationToken cancellationToken)
         {
-            // DbContext регистрируется как Scoped, а фоновая служба —
-            // Singleton, поэтому для каждого опроса создаётся своя область.
             using var scope = _scopeFactory.CreateScope();
 
             var context = scope.ServiceProvider
@@ -105,8 +98,6 @@ namespace ProductCatalogApp.Services
             }
         }
 
-        // Случайное блуждание около середины диапазона нормы
-        // с редкими выбросами за его границы.
         private double NextValue(Sensor sensor)
         {
             double range = sensor.MaxValue - sensor.MinValue;
@@ -114,11 +105,8 @@ namespace ProductCatalogApp.Services
 
             if (Random.Shared.NextDouble() < _options.AlarmProbability)
             {
-                // Выброс за границу нормы на 5–25 % ширины диапазона.
                 double excess = range * (0.05 + Random.Shared.NextDouble() * 0.2);
 
-                // Неотрицательные величины (например, вибрация)
-                // не могут опуститься ниже нуля.
                 bool canGoBelow = sensor.MinValue < 0 ||
                     sensor.MinValue - excess >= 0;
 
@@ -133,7 +121,6 @@ namespace ProductCatalogApp.Services
                 ? last
                 : nominal;
 
-            // Возврат к середине нормы и случайное отклонение.
             double next = previous
                 + (nominal - previous) * 0.3
                 + (Random.Shared.NextDouble() - 0.5) * range * 0.15;

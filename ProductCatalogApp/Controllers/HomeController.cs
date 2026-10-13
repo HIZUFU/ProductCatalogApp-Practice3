@@ -14,7 +14,6 @@ namespace ProductCatalogApp.Controllers
             _logger = logger;
         }
 
-        // Главная страница доступна и гостям.
         [AllowAnonymous]
         public IActionResult Index()
         {

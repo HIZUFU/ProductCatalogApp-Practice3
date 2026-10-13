@@ -62,8 +62,6 @@ namespace ProductCatalogApp.Data
             await SeedSensorsAsync(context);
         }
 
-        // Создаёт демонстрационные металлургические агрегаты с датчиками,
-        // если в базе данных ещё нет ни одного датчика.
         private static async Task SeedSensorsAsync(
             ApplicationDbContext context)
         {

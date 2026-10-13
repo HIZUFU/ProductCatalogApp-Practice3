@@ -29,8 +29,6 @@ namespace ProductCatalogApp.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // При удалении оборудования удаляются его датчики,
-            // при удалении датчика — его показания.
             modelBuilder.Entity<Sensor>()
                 .HasOne(sensor => sensor.Equipment)
                 .WithMany()
@@ -43,7 +41,6 @@ namespace ProductCatalogApp.Data
                 .HasForeignKey(reading => reading.SensorId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Индексы для выборки последних показаний и активных тревог.
             modelBuilder.Entity<SensorReading>()
                 .HasIndex(reading => new { reading.SensorId, reading.Timestamp });
 

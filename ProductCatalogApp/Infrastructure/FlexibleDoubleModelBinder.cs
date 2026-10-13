@@ -3,9 +3,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace ProductCatalogApp.Infrastructure
 {
-    // Привязка дробных чисел из форм. Поле <input type="number"> всегда
-    // отправляет точку, а при русской культуре MVC ожидает запятую,
-    // поэтому принимаются оба десятичных разделителя.
     public class FlexibleDoubleModelBinder : IModelBinder
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)

@@ -6,9 +6,6 @@ using ProductCatalogApp.Data;
 
 namespace ProductCatalogApp.Controllers
 {
-    // Страница мониторинга датчиков в реальном времени.
-    // Доступна всем, включая гостей: данные страница получает
-    // через хаб SignalR (/hubs/monitoring), а не из этого контроллера.
     [AllowAnonymous]
     public class MonitoringController : Controller
     {
@@ -22,8 +19,6 @@ namespace ProductCatalogApp.Controllers
         // GET: Monitoring
         public async Task<IActionResult> Index()
         {
-            // В списке выбора — только площадки, на оборудовании
-            // которых установлены датчики.
             var productionSites = await _context.ProductionSites
                 .Where(site => _context.Sensors.Any(sensor =>
                     sensor.Equipment!.ProductionSiteId == site.Id))

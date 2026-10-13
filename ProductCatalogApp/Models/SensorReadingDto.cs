@@ -1,6 +1,5 @@
 namespace ProductCatalogApp.Models
 {
-    // Показание датчика в виде, удобном для передачи клиентам через SignalR.
     public class SensorReadingDto
     {
         public int Id { get; set; }
@@ -35,8 +34,6 @@ namespace ProductCatalogApp.Models
 
         public DateTime? AcknowledgedAt { get; set; }
 
-        // Для преобразования должны быть загружены связанные данные:
-        // Sensor -> Equipment -> ProductionSite.
         public static SensorReadingDto FromEntity(SensorReading reading)
         {
             var sensor = reading.Sensor
@@ -69,8 +66,6 @@ namespace ProductCatalogApp.Models
             };
         }
 
-        // SQLite не хранит DateTimeKind. Время в БД записывается в UTC,
-        // поэтому помечаем его явно, чтобы браузер перевёл его в местное.
         private static DateTime AsUtc(DateTime value)
         {
             return DateTime.SpecifyKind(value, DateTimeKind.Utc);

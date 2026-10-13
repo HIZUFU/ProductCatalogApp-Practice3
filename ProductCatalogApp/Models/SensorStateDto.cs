@@ -1,6 +1,5 @@
 namespace ProductCatalogApp.Models
 {
-    // Датчик и его последнее показание (для карточек на странице мониторинга).
     public class SensorStateDto
     {
         public int Id { get; set; }

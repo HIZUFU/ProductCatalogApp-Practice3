@@ -1,8 +1,6 @@
 @model ProductCatalogApp.Models.Sensor
 @using System.Globalization
 
-@* Поля формы датчика, общие для страниц добавления и редактирования. *@
-
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
 <div class="mb-3">
@@ -29,8 +27,6 @@
     <span asp-validation-for="Unit" class="text-danger"></span>
 </div>
 
-@* Поле type="number" ожидает значение с точкой, поэтому
-   границы нормы выводятся в инвариантной культуре. *@
 <div class="row">
     <div class="col-sm-6 mb-3">
         <label asp-for="MinValue" class="form-label"></label>

@@ -41,7 +41,6 @@ else
         <tbody>
             @foreach (var reading in Model.Readings)
             {
-                // Время хранится в БД в UTC.
                 var localTime = DateTime
                     .SpecifyKind(reading.Timestamp, DateTimeKind.Utc)
                     .ToLocalTime();

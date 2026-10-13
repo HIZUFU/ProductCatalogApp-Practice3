@@ -13,7 +13,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews(options =>
 {
-    // Дробные числа в формах принимаются и с точкой, и с запятой.
     options.ModelBinderProviders.Insert(
         0,
         new FlexibleDoubleModelBinderProvider());
@@ -47,11 +46,8 @@ builder.Services.AddScoped<
     IPasswordHasher<AppUser>,
     PasswordHasher<AppUser>>();
 
-// SignalR: двусторонний обмен сообщениями между сервером и клиентами
-// (WebSockets, при недоступности — Server-Sent Events или Long Polling).
 builder.Services.AddSignalR(options =>
 {
-    // Подробные ошибки хаба передаются клиенту только при разработке.
     options.EnableDetailedErrors = builder.Environment.IsDevelopment();
     options.KeepAliveInterval = TimeSpan.FromSeconds(15);
 });
@@ -59,7 +55,6 @@ builder.Services.AddSignalR(options =>
 builder.Services.AddSingleton<OnlineUserTracker>();
 builder.Services.AddScoped<SensorReadingService>();
 
-// Имитатор датчиковой аппаратуры (фоновая служба).
 builder.Services.Configure<MonitoringOptions>(
     builder.Configuration.GetSection(MonitoringOptions.SectionName));
 builder.Services.AddSingleton<SimulationState>();
@@ -87,8 +82,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Хаб доступен и гостям: права на отдельные методы хаба
-// проверяются атрибутами [Authorize] внутри MonitoringHub.
 app.MapHub<MonitoringHub>("/hubs/monitoring")
     .AllowAnonymous();
 

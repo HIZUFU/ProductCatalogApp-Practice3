@@ -7,12 +7,9 @@ using ProductCatalogApp.Models;
 
 namespace ProductCatalogApp.Controllers
 {
-    // Справочник датчиков. Просмотр доступен авторизованным пользователям,
-    // добавление, изменение и удаление — только администратору.
     [Authorize]
     public class SensorsController : Controller
     {
-        // Сколько последних показаний выводить на странице датчика.
         private const int HistorySize = 20;
 
         private readonly ApplicationDbContext _context;
@@ -23,7 +20,6 @@ namespace ProductCatalogApp.Controllers
         }
 
         // GET: Sensors
-        // Также выполняет фильтрацию датчиков по оборудованию.
         public async Task<IActionResult> Index(int? equipmentId)
         {
             var sensorsQuery = _context.Sensors
@@ -48,7 +44,6 @@ namespace ProductCatalogApp.Controllers
         }
 
         // GET: Sensors/Details/5
-        // Датчик и последние сохранённые в БД показания.
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -188,7 +183,6 @@ namespace ProductCatalogApp.Controllers
         }
 
         // POST: Sensors/Delete/5
-        // Показания датчика удаляются каскадно.
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -205,7 +199,6 @@ namespace ProductCatalogApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Создаёт выпадающий список оборудования с названием площадки.
         private async Task LoadEquipmentAsync(int? selectedId = null)
         {
             var equipmentItems = await _context.EquipmentItems

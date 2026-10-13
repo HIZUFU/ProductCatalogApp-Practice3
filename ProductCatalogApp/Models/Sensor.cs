@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ProductCatalogApp.Models
 {
-    // Датчик, установленный на оборудовании металлургического агрегата.
     public class Sensor : IValidatableObject
     {
         public int Id { get; set; }
@@ -35,7 +34,6 @@ namespace ProductCatalogApp.Models
 
         public List<SensorReading> Readings { get; set; } = new();
 
-        // Проверяет, выходит ли значение за границы нормы.
         public bool IsOutOfRange(double value)
         {
             return value < MinValue || value > MaxValue;

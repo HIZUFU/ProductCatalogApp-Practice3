@@ -2,8 +2,6 @@ using Microsoft.Extensions.Options;
 
 namespace ProductCatalogApp.Services
 {
-    // Текущее состояние имитатора датчиков (включён или выключен).
-    // Регистрируется как Singleton: состояние общее для хаба и фоновой службы.
     public class SimulationState
     {
         private volatile bool _isEnabled;

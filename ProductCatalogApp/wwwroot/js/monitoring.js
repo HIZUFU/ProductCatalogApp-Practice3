@@ -1,6 +1,3 @@
-// Клиентская часть мониторинга датчиков на ASP.NET Core SignalR.
-// Сервер вызывает у клиента методы через connection.on(...),
-// клиент вызывает методы хаба через connection.invoke(...).
 "use strict";
 
 (function () {
@@ -12,7 +9,6 @@
 
     const isAdmin = root.dataset.admin === "true";
 
-    // Сколько строк хранить в журнале и сколько тревог показывать.
     const MAX_JOURNAL_ROWS = 50;
     const MAX_ALARMS = 50;
 
@@ -37,12 +33,11 @@
         readingResult: document.getElementById("reading-result")
     };
 
-    // Текущее состояние страницы.
     const state = {
-        siteId: null,          // выбранная площадка (null — все площадки)
-        sensors: new Map(),    // id датчика -> датчик с последним показанием
-        sensorCards: new Map(),// id датчика -> карточка на странице
-        alarms: [],            // активные тревоги, новые — первыми
+        siteId: null,
+        sensors: new Map(),
+        sensorCards: new Map(),
+        alarms: [],
         simulationEnabled: false
     };
 
@@ -64,24 +59,17 @@
         maximumFractionDigits: 2
     });
 
-    // ===== Подключение к хабу =====
-
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/hubs/monitoring")
         .withAutomaticReconnect()
         .configureLogging(signalR.LogLevel.Warning)
         .build();
 
-    // ===== Методы, которые вызывает сервер =====
-
-    // Количество и имена пользователей онлайн (рассылается всем).
     connection.on("OnlineChanged", summary => {
         renderOnline(summary);
     });
 
-    // Снимок состояния — ответ на JoinSite (только этому клиенту).
     connection.on("ReceiveSnapshot", snapshot => {
-        // Ответ на устаревший запрос, если площадку быстро сменили.
         if ((snapshot.productionSiteId ?? null) !== state.siteId) {
             return;
         }
@@ -98,7 +86,6 @@
         renderSimulation(snapshot.simulationEnabled);
     });
 
-    // Новое показание датчика (рассылается группе площадки).
     connection.on("ReceiveReading", reading => {
         if (state.siteId !== null &&
             reading.productionSiteId !== state.siteId) {
@@ -115,7 +102,6 @@
         prependJournalRow(reading);
     });
 
-    // Тревога: показание вне границ нормы (рассылается всем).
     connection.on("AlarmRaised", reading => {
         if (state.alarms.some(alarm => alarm.id === reading.id)) {
             return;
@@ -126,7 +112,6 @@
         renderAlarms();
     });
 
-    // Администратор квитировал тревогу (рассылается всем).
     connection.on("AlarmAcknowledged", reading => {
         state.alarms = state.alarms.filter(alarm => alarm.id !== reading.id);
         renderAlarms();
@@ -141,12 +126,10 @@
         updateJournalRow(reading);
     });
 
-    // Имитатор датчиков включён или выключен (рассылается всем).
     connection.on("SimulationStateChanged", enabled => {
         renderSimulation(enabled);
     });
 
-    // Подтверждение сохранения показания (только отправителю).
     connection.on("ReadingAccepted", reading => {
         if (!elements.readingResult) {
             return;
@@ -165,21 +148,15 @@
         setConnectionStatus("reconnecting");
     });
 
-    // После переподключения у клиента новый ConnectionId,
-    // поэтому подписку на группу площадки нужно оформить заново.
     connection.onreconnected(async () => {
         setConnectionStatus("connected");
         await joinSite(state.siteId);
     });
 
-    // Автоматическое переподключение исчерпало попытки
-    // (сервер долго недоступен) — продолжаем подключаться.
     connection.onclose(() => {
         setConnectionStatus("disconnected");
         scheduleStart();
     });
-
-    // ===== Вызовы серверных методов =====
 
     async function joinSite(siteId) {
         try {
@@ -200,8 +177,6 @@
     async function setSimulationEnabled(enabled) {
         await connection.invoke("SetSimulationEnabled", enabled);
     }
-
-    // ===== Обработчики элементов страницы =====
 
     elements.siteSelect.addEventListener("change", async () => {
         state.siteId = parseSiteId(elements.siteSelect.value);
@@ -277,8 +252,6 @@
             }
         });
     }
-
-    // ===== Отрисовка =====
 
     function renderOnline(summary) {
         elements.onlineCount.textContent = summary.totalCount;
@@ -373,7 +346,6 @@
             : "";
 
         if (highlight) {
-            // Перезапуск CSS-анимации подсветки обновлённой карточки.
             card.card.classList.remove("sensor-updated");
             void card.card.offsetWidth;
             card.card.classList.add("sensor-updated");
@@ -531,8 +503,6 @@
         return row;
     }
 
-    // ===== Вспомогательные функции =====
-
     function readingStatus(reading) {
         if (!reading) {
             return { color: "secondary", text: "нет данных", rowClass: "" };
@@ -586,7 +556,6 @@
         return `${numberFormat.format(min)} – ${numberFormat.format(max)} ${unit}`;
     }
 
-    // Текст ошибки из HubException без служебного префикса SignalR.
     function errorText(error) {
         const message = error && error.message ? error.message : String(error);
         const marker = "HubException: ";
@@ -632,8 +601,6 @@
         return element;
     }
 
-    // ===== Запуск =====
-
     async function start() {
         if (connection.state !== signalR.HubConnectionState.Disconnected) {
             return;
@@ -651,12 +618,10 @@
         }
     }
 
-    // Повторная попытка подключения через 5 секунд.
     function scheduleStart() {
         setTimeout(start, 5000);
     }
 
-    // Браузер может восстановить выбранную площадку при возврате на страницу.
     state.siteId = parseSiteId(elements.siteSelect.value);
 
     start();

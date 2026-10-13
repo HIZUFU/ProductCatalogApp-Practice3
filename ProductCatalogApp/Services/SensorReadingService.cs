@@ -4,13 +4,10 @@ using ProductCatalogApp.Models;
 
 namespace ProductCatalogApp.Services
 {
-    // Работа с показаниями датчиков в базе данных.
     public class SensorReadingService
     {
-        // Сколько последних показаний отправлять клиенту в снимке.
         public const int RecentReadingsCount = 50;
 
-        // Сколько неквитированных тревог отправлять клиенту в снимке.
         public const int ActiveAlarmsCount = 50;
 
         private readonly ApplicationDbContext _context;
@@ -26,8 +23,6 @@ namespace ProductCatalogApp.Services
                 .AnyAsync(site => site.Id == productionSiteId);
         }
 
-        // Сохраняет показание датчика в БД.
-        // Возвращает null, если датчик не найден.
         public async Task<SensorReadingDto?> AddReadingAsync(
             int sensorId,
             double value,
@@ -51,7 +46,6 @@ namespace ProductCatalogApp.Services
             return SensorReadingDto.FromEntity(reading);
         }
 
-        // Создаёт показание и определяет, является ли оно тревогой.
         public static SensorReading CreateReading(
             Sensor sensor,
             double value,
@@ -70,9 +64,6 @@ namespace ProductCatalogApp.Services
             };
         }
 
-        // Квитирует тревогу: сохраняет в БД, кто и когда её подтвердил.
-        // Возвращает null, если тревога не найдена. Повторное
-        // квитирование не изменяет уже сохранённую отметку.
         public async Task<SensorReadingDto?> AcknowledgeAlarmAsync(
             int readingId,
             string userName)
@@ -101,8 +92,6 @@ namespace ProductCatalogApp.Services
             return SensorReadingDto.FromEntity(reading);
         }
 
-        // Формирует снимок состояния: датчики с последними значениями,
-        // журнал последних показаний и активные тревоги.
         public async Task<MonitoringSnapshot> GetSnapshotAsync(
             int? productionSiteId)
         {
@@ -130,7 +119,6 @@ namespace ProductCatalogApp.Services
                 .ThenBy(sensor => sensor.Name)
                 .ToListAsync();
 
-            // Последнее показание каждого датчика.
             var lastReadings = await readingsQuery
                 .Where(reading => reading.Id == _context.SensorReadings
                     .Where(other => other.SensorId == reading.SensorId)
@@ -170,7 +158,6 @@ namespace ProductCatalogApp.Services
             };
         }
 
-        // Показания вместе с датчиком, оборудованием и площадкой.
         private IQueryable<SensorReading> ReadingsWithDetails()
         {
             return _context.SensorReadings

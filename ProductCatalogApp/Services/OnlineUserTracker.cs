@@ -3,12 +3,8 @@ using ProductCatalogApp.Models;
 
 namespace ProductCatalogApp.Services
 {
-    // Хранит список активных подключений к хабу мониторинга.
-    // Регистрируется как Singleton, т.к. экземпляры хаба создаются
-    // заново на каждый вызов.
     public class OnlineUserTracker
     {
-        // Идентификатор подключения -> имя пользователя (null — гость).
         private readonly ConcurrentDictionary<string, string?> _connections =
             new();
 
@@ -26,8 +22,6 @@ namespace ProductCatalogApp.Services
         {
             var names = _connections.Values.ToList();
 
-            // Пользователь может открыть несколько вкладок,
-            // поэтому имена считаются без повторов.
             var userNames = names
                 .OfType<string>()
                 .Distinct()
