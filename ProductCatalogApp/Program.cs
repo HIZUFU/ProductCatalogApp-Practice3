@@ -50,6 +50,7 @@ builder.Services.AddSignalR(options =>
 });
 
 builder.Services.AddSingleton<OnlineUserTracker>();
+builder.Services.AddScoped<SensorReadingService>();
 
 var app = builder.Build();
 

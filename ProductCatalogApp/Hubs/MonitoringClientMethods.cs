@@ -6,5 +6,8 @@ namespace ProductCatalogApp.Hubs
     {
         // Количество и имена пользователей онлайн (всем клиентам).
         public const string OnlineChanged = "OnlineChanged";
+
+        // Снимок текущего состояния мониторинга (только отправителю).
+        public const string ReceiveSnapshot = "ReceiveSnapshot";
     }
 }
