@@ -16,13 +16,16 @@ namespace ProductCatalogApp.Hubs
 
         private readonly OnlineUserTracker _onlineUsers;
         private readonly SensorReadingService _readingService;
+        private readonly SimulationState _simulation;
 
         public MonitoringHub(
             OnlineUserTracker onlineUsers,
-            SensorReadingService readingService)
+            SensorReadingService readingService,
+            SimulationState simulation)
         {
             _onlineUsers = onlineUsers;
             _readingService = readingService;
+            _simulation = simulation;
         }
 
         // Подключение клиента: учитываем его среди пользователей онлайн
@@ -87,6 +90,8 @@ namespace ProductCatalogApp.Hubs
             var snapshot = await _readingService.GetSnapshotAsync(
                 productionSiteId);
 
+            snapshot.SimulationEnabled = _simulation.IsEnabled;
+
             await Clients.Caller.SendAsync(
                 MonitoringClientMethods.ReceiveSnapshot,
                 snapshot);
@@ -144,6 +149,18 @@ namespace ProductCatalogApp.Hubs
             await Clients.All.SendAsync(
                 MonitoringClientMethods.AlarmAcknowledged,
                 alarm);
+        }
+
+        // Серверный метод 4 (только администратор).
+        // Включает или выключает имитатор датчиковой аппаратуры.
+        [Authorize(Roles = "Admin")]
+        public async Task SetSimulationEnabled(bool enabled)
+        {
+            _simulation.IsEnabled = enabled;
+
+            await Clients.All.SendAsync(
+                MonitoringClientMethods.SimulationStateChanged,
+                enabled);
         }
     }
 }

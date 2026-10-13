@@ -7,6 +7,9 @@ namespace ProductCatalogApp.Models
         // Выбранная площадка (null — все площадки).
         public int? ProductionSiteId { get; set; }
 
+        // Включён ли имитатор датчиков.
+        public bool SimulationEnabled { get; set; }
+
         public List<SensorStateDto> Sensors { get; set; } = new();
 
         // Последние показания выбранной площадки (новые — первыми).

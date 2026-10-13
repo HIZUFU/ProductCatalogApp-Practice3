@@ -21,5 +21,8 @@ namespace ProductCatalogApp.Hubs
 
         // Администратор квитировал тревогу (всем клиентам).
         public const string AlarmAcknowledged = "AlarmAcknowledged";
+
+        // Имитатор датчиков включён или выключен (всем клиентам).
+        public const string SimulationStateChanged = "SimulationStateChanged";
     }
 }
