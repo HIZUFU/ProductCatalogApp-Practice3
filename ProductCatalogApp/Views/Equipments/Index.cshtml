@@ -1,0 +1,111 @@
+@model IEnumerable<ProductCatalogApp.Models.Equipment>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+
+    @if (User.IsInRole("Admin"))
+    {
+        <p>
+            <a asp-action="Create"
+               class="btn btn-primary">
+                Добавить оборудование
+            </a>
+        </p>
+    }
+
+<form asp-action="Index" method="get" class="mb-3">
+    <label for="productionSiteId">Производственная площадка:</label>
+
+    <select id="productionSiteId"
+            name="productionSiteId"
+            asp-items="ViewBag.ProductionSiteId"
+            class="form-control">
+        <option value="">Все площадки</option>
+    </select>
+
+    <button type="submit" class="btn btn-primary mt-2">
+        Фильтровать
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary mt-2">
+        Сбросить
+    </a>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Model)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InventoryNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductionSiteId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductionSite)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(model => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Model)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.InventoryNumber)
+            </td>
+            <td>
+                @(item.ProductionSite?.Name ?? "Не указана")
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.ProductionSite)
+            </td>
+            <td>
+            @if (User.IsInRole("Admin"))
+            {
+                <td>
+                    <a asp-action="Edit"
+                       asp-route-id="@item.Id">
+                        Редактировать
+                    </a>
+                </td>
+
+                <span> | </span>
+            }
+
+            <td>
+                <a asp-action="Details"
+                   asp-route-id="@item.Id">
+                    Подробнее
+                </a>    
+            </td>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <span> | </span>
+                <td>
+                    <a asp-action="Delete"
+                       asp-route-id="@item.Id">
+                        Удалить
+                    </a>
+                </td>
+            }
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

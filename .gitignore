@@ -1,0 +1,13 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Результаты сборки
+**/bin/
+**/obj/
+
+# База данных SQLite
+*.db
+*.db-shm
+*.db-wal

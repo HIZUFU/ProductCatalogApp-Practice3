@@ -1,0 +1,73 @@
+@model IEnumerable<ProductCatalogApp.Models.ProductionSite>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+@if (User.IsInRole("Admin"))
+{
+    <a asp-action="Create"
+        class="btn btn-primary">
+        Добавить оборудование
+    </a>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EquipmentItems)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(model => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.EquipmentItems)
+            </td>
+            @if (User.IsInRole("Admin"))
+            {
+                <td>
+                    <a asp-action="Edit"
+                       asp-route-id="@item.Id">
+                        Редактировать
+                    </a>
+                </td>
+
+                <span> | </span>
+            }
+            <td>
+                <a asp-action="Details"
+                   asp-route-id="@item.Id">
+                    Подробнее
+                </a>    
+            </td>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <span> | </span>
+                <td>
+                    <a asp-action="Delete"
+                       asp-route-id="@item.Id">
+                        Удалить
+                    </a>
+                </td>
+            }
+        </tr>
+}
+    </tbody>
+</table>

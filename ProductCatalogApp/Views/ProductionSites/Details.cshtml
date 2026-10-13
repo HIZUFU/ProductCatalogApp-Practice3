@@ -1,0 +1,59 @@
+@model ProductCatalogApp.Models.ProductionSite
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>ProductionSite</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+    </dl>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+    </dl>
+    <h4>Оборудование площадки</h4>
+
+    @if (Model.EquipmentItems != null && Model.EquipmentItems.Count > 0)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Модель</th>
+                    <th>Инвентарный номер</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var equipment in Model.EquipmentItems)
+                {
+                    <tr>
+                        <td>@equipment.Name</td>
+                        <td>@equipment.Model</td>
+                        <td>@equipment.InventoryNumber</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>К этой производственной площадке оборудование пока не привязано.</p>
+    }
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
