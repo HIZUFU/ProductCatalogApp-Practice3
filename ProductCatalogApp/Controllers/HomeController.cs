@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductCatalogApp.Models;
 using System.Diagnostics;
@@ -13,6 +14,8 @@ namespace ProductCatalogApp.Controllers
             _logger = logger;
         }
 
+        // Главная страница доступна и гостям.
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return View();
