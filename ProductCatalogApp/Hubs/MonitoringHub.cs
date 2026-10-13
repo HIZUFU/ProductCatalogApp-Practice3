@@ -123,5 +123,27 @@ namespace ProductCatalogApp.Hubs
                 MonitoringClientMethods.ReadingAccepted,
                 reading);
         }
+
+        // Серверный метод 3 (только администратор).
+        // Квитирование тревоги: отметка сохраняется в БД,
+        // все клиенты убирают тревогу из списка активных.
+        [Authorize(Roles = "Admin")]
+        public async Task AcknowledgeAlarm(int readingId)
+        {
+            string adminName = Context.User?.Identity?.Name ?? "Администратор";
+
+            var alarm = await _readingService.AcknowledgeAlarmAsync(
+                readingId,
+                adminName);
+
+            if (alarm == null)
+            {
+                throw new HubException("Тревога не найдена.");
+            }
+
+            await Clients.All.SendAsync(
+                MonitoringClientMethods.AlarmAcknowledged,
+                alarm);
+        }
     }
 }

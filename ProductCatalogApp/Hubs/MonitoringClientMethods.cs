@@ -18,5 +18,8 @@ namespace ProductCatalogApp.Hubs
 
         // Подтверждение сохранения показания оператора (только отправителю).
         public const string ReadingAccepted = "ReadingAccepted";
+
+        // Администратор квитировал тревогу (всем клиентам).
+        public const string AlarmAcknowledged = "AlarmAcknowledged";
     }
 }
