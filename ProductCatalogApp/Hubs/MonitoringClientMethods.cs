@@ -9,5 +9,14 @@ namespace ProductCatalogApp.Hubs
 
         // Снимок текущего состояния мониторинга (только отправителю).
         public const string ReceiveSnapshot = "ReceiveSnapshot";
+
+        // Новое показание датчика (группам площадок).
+        public const string ReceiveReading = "ReceiveReading";
+
+        // Показание вышло за границы нормы (всем клиентам).
+        public const string AlarmRaised = "AlarmRaised";
+
+        // Подтверждение сохранения показания оператора (только отправителю).
+        public const string ReadingAccepted = "ReadingAccepted";
     }
 }
